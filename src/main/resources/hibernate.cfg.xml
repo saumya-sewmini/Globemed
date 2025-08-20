@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 6.0//EN"
+    "http://hibernate.org/dtd/hibernate-configuration-6.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/globemed_db?createDatabaseIfNotExist=true</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">173^%mySQLsau</property>
+
+        <!-- Dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+
+        <!-- Auto schema creation -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- Show SQL -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+
+        <!-- Mapping -->
+        <mapping class="lk.sau.app.globemed.entity.Appointment"/>
+        <mapping class="lk.sau.app.globemed.entity.Bill"/>
+        <mapping class="lk.sau.app.globemed.entity.Doctor"/>
+        <mapping class="lk.sau.app.globemed.entity.Gender"/>
+        <mapping class="lk.sau.app.globemed.entity.Insurance"/>
+        <mapping class="lk.sau.app.globemed.entity.MedicalRecord"/>
+        <mapping class="lk.sau.app.globemed.entity.Patient"/>
+        <mapping class="lk.sau.app.globemed.entity.Prescription"/>
+        <mapping class="lk.sau.app.globemed.entity.Role"/>
+        <mapping class="lk.sau.app.globemed.entity.Status"/>
+        <mapping class="lk.sau.app.globemed.entity.User"/>
+    </session-factory>
+</hibernate-configuration>
