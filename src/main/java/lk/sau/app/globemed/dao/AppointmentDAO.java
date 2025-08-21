@@ -5,6 +5,7 @@
 package lk.sau.app.globemed.dao;
 
 import java.util.List;
+import lk.sau.app.globemed.dto.AppointmentDTO;
 import lk.sau.app.globemed.entity.Appointment;
 import lk.sau.app.globemed.util.HibernateUtil;
 import org.hibernate.Session;
@@ -16,7 +17,7 @@ import org.hibernate.query.Query;
  * @author Saumya
  */
 public class AppointmentDAO {
-    
+
     public void save(Appointment appointment) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -24,11 +25,13 @@ public class AppointmentDAO {
             session.persist(appointment);
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
             e.printStackTrace();
         }
     }
-    
+
     public List<Appointment> findByPatientId(int patientId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             String hql = "FROM Appointment a WHERE a.patient.id = :patientId";
@@ -37,5 +40,22 @@ public class AppointmentDAO {
             return query.list();
         }
     }
-    
+
+    public List<AppointmentDTO> findCompletedAppointmentsByDoctor(int doctorId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        String hql = "SELECT new lk.sau.app.globemed.dto.AppointmentDTO(" +
+                     "a.id, p.id, a.doctor.id, " +  // 👈 add patientId and doctorId
+                     "CONCAT(p.fname, ' ', p.lname), " +
+                     "a.appointmentDate, a.notes) " +
+                     "FROM Appointment a " +
+                     "JOIN a.patient p " +
+                     "JOIN a.status s " +
+                     "WHERE a.doctor.id = :doctorId AND s.status = 'Completed'";
+
+        return session.createQuery(hql, AppointmentDTO.class)
+                .setParameter("doctorId", doctorId)
+                .getResultList();
+    }
+    }
+
 }

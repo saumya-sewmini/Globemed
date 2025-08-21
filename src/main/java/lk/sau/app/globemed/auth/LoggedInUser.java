@@ -4,7 +4,6 @@
  */
 package lk.sau.app.globemed.auth;
 
-import lk.sau.app.globemed.entity.Patient;
 import lk.sau.app.globemed.entity.User;
 
 /**
