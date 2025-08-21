@@ -5,6 +5,7 @@
 package gui;
 
 import javax.swing.JOptionPane;
+import lk.sau.app.globemed.auth.LoggedInUser;
 import lk.sau.app.globemed.service.AuthenticationService;
 
 /**
@@ -185,8 +186,11 @@ public class LoginForm extends javax.swing.JFrame {
         AuthenticationService authService = new AuthenticationService();
         authService.login(username, password);
 
-        // Close login frame only if login success
-        this.dispose();
+        if (LoggedInUser.getUser() != null) {
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid username or password!");
+        }
 
 //        AdminDashboard adminDashboard = new AdminDashboard();
 //        adminDashboard.setVisible(true);

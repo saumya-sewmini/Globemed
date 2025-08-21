@@ -16,7 +16,7 @@ public class Patient {
     
     @Id
     @Column(name = "patient_id")
-    private Long patientId;   // same as user_id
+    private int patientId;   // same as user_id
 
     @OneToOne
     @MapsId
@@ -36,11 +36,11 @@ public class Patient {
     @JoinColumn(name = "gender_id", nullable = false)
     private Gender gender;
 
-    public Long getPatientId() {
+    public int getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(Long patientId) {
+    public void setPatientId(int patientId) {
         this.patientId = patientId;
     }
 

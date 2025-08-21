@@ -5,6 +5,7 @@
 package lk.sau.app.globemed.service;
 
 import lk.sau.app.globemed.auth.AuthProcessor;
+import lk.sau.app.globemed.auth.LoggedInUser;
 import lk.sau.app.globemed.dao.UserDAO;
 import lk.sau.app.globemed.entity.User;
 
@@ -26,7 +27,10 @@ public class AuthenticationService {
         User user = userDAO.findByUsernameAndPassword(username, password);
 
         if (user != null) {
+            LoggedInUser.setUser(user);
+            
             System.out.println("Login successful: " + user.getUsername());
+            
             authProcessor.process(user);
         } else {
             System.out.println("Invalid username or password!");

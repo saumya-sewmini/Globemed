@@ -15,7 +15,7 @@ public class Doctor {
     
     @Id
     @Column(name = "doctor_id")
-    private Long doctorId;   // same as user_id
+    private int doctorId;   // same as user_id
 
     @OneToOne
     @MapsId
@@ -34,11 +34,11 @@ public class Doctor {
     @Column(name = "license_no", unique = true, length = 45)
     private String licenseNo;
 
-    public Long getDoctorId() {
+    public int getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(Long doctorId) {
+    public void setDoctorId(int doctorId) {
         this.doctorId = doctorId;
     }
 
@@ -82,6 +82,9 @@ public class Doctor {
         this.licenseNo = licenseNo;
     }
     
-    
+    @Override
+    public String toString(){
+        return fname + " " + lname + " (" + specialization + ")"; 
+    }
     
 }
