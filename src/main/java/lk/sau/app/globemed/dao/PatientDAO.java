@@ -25,11 +25,21 @@ public class PatientDAO {
             System.out.println("Transaction committed successfully!");
         }
     }
-    
+
     public List<Patient> getAllPatients() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM Patient", Patient.class).list();
         }
     }
+
+    public List<Patient> searchByUsername(String username) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "from Patient p where p.user.username like :username", Patient.class)
+                    .setParameter("username", "%" + username + "%")
+                    .list();
+        }
+    }
+    
 
 }
