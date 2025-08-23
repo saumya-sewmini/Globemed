@@ -4,17 +4,7 @@
  */
 package gui;
 
-import java.awt.Component;
-import java.util.List;
-import java.util.function.Consumer;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.table.TableCellRenderer;
 import lk.sau.app.globemed.auth.LoggedInUser;
-import lk.sau.app.globemed.dao.AppointmentDAO;
-import lk.sau.app.globemed.dto.AppointmentDTO;
 
 /**
  *
@@ -28,100 +18,7 @@ public class DoctorDashboard extends javax.swing.JFrame {
     public DoctorDashboard() {
 
         initComponents();
-        loadAppointments();
 
-    }
-
-    private void loadAppointments() {
-        int doctorId = LoggedInUser.getUser().getUserId();
-        AppointmentDAO dao = new AppointmentDAO();
-        List<AppointmentDTO> appointments = dao.findCompletedAppointmentsByDoctor(doctorId);
-
-        // Build table model
-        String[] columns = {"Patient", "Date", "Notes", "View Details", "Add"};
-        Object[][] data = new Object[appointments.size()][columns.length];
-
-        for (int i = 0; i < appointments.size(); i++) {
-            AppointmentDTO dto = appointments.get(i);
-            data[i][0] = dto.getPatientName();
-            data[i][1] = dto.getAppointmentDate();
-            data[i][2] = dto.getNotes();
-            data[i][3] = "View";
-            data[i][4] = "Add";
-        }
-
-        javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columns);
-        jTable1.setModel(model);
-
-        // Add buttons
-        jTable1.getColumn("View Details").setCellRenderer(new ButtonRenderer("View"));
-        jTable1.getColumn("View Details").setCellEditor(new ButtonEditor("View", (row) -> {
-            AppointmentDTO dto = appointments.get(row);
-            
-            System.out.println("[VIEW] AppointmentId=" + dto.getId() + 
-                       ", PatientId=" + dto.getPatientId() + 
-                       ", DoctorId=" + dto.getDoctorId());
-            
-            new ViewDetails(dto.getId(), dto.getPatientId(), dto.getDoctorId()).setVisible(true);
-        }));
-
-        jTable1.getColumn("Add").setCellRenderer(new ButtonRenderer("Add"));
-        jTable1.getColumn("Add").setCellEditor(new ButtonEditor("Add", (row) -> {
-            AppointmentDTO dto = appointments.get(row);
-            
-            System.out.println("[ADD] AppointmentId=" + dto.getId() + 
-                       ", PatientId=" + dto.getPatientId() + 
-                       ", DoctorId=" + dto.getDoctorId());
-            
-            new AddTreatment(dto.getId(), dto.getPatientId(), dto.getDoctorId()).setVisible(true);
-        }));
-    }
-
-    public class ButtonRenderer extends JButton implements TableCellRenderer {
-
-        public ButtonRenderer(String label) {
-            setText(label);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            return this;
-        }
-    }
-
-    public class ButtonEditor extends DefaultCellEditor {
-
-        private JButton button;
-        private Consumer<Integer> onClick;
-        private int row;
-
-        public ButtonEditor(String label, Consumer<Integer> onClick) {
-            super(new JTextField());
-            this.button = new JButton(label);
-            this.onClick = onClick;
-
-            button.addActionListener(e -> {
-                fireEditingStopped();
-                if (onClick != null) {
-                    onClick.accept(row);
-                }
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-
-            this.row = row;
-            button.setText(value == null ? "" : value.toString());
-            return button;
-
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return button.getText();
-        }
     }
 
     /**

@@ -2,7 +2,6 @@ package lk.sau.app.globemed;
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf;
 import gui.LoginForm;
-import gui.PatientDashboard;
 
 /**
  *
