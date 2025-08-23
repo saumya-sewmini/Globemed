@@ -233,6 +233,11 @@ public class PatientHistory extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        aHistoryTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                aHistoryTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(aHistoryTable);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -368,12 +373,18 @@ public class PatientHistory extends javax.swing.JFrame {
             mediator.bookAppointment(this.patientId, doctorId, date, time);
 
             JOptionPane.showMessageDialog(this, "Appointment booked successfully!");
+            
+            loadAppointmentsToTable(patientId);
 
             clearForm();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error booking appointment: " + e.getMessage());
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void aHistoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aHistoryTableMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_aHistoryTableMouseClicked
 
     /**
      * @param args the command line arguments

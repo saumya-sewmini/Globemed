@@ -65,4 +65,9 @@ public class AppointmentMediatorImpl implements AppointmentMediator {
         return appointmentDAO.getAppointmentsByPatientId(patientId);
     }
 
+    @Override
+    public List<Appointment> getCompletedAppointmentsByDoctor(int doctorId) {
+        return appointmentDAO.getAppointmentsByDoctorAndStatus(doctorId, 2);
+    }
+
 }

@@ -39,13 +39,25 @@ public class AppointmentDAO {
             return query.list();
         }
     }
-    
+
     public List<Appointment> getAppointmentsByPatientId(int patientId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery(
-                "FROM Appointment a WHERE a.patient.patientId = :pid", Appointment.class)
-                .setParameter("pid", patientId)
-                .list();
+                    "FROM Appointment a WHERE a.patient.patientId = :pid", Appointment.class)
+                    .setParameter("pid", patientId)
+                    .list();
+        }
+    }
+
+    public List<Appointment> getAppointmentsByDoctorAndStatus(int doctorId, int statusId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "FROM Appointment a "
+                    + "WHERE a.doctor.id = :doctorId AND a.status.id = :statusId",
+                    Appointment.class)
+                    .setParameter("doctorId", doctorId)
+                    .setParameter("statusId", statusId)
+                    .list();
         }
     }
 

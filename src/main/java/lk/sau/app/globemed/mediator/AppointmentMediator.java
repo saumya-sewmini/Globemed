@@ -18,7 +18,9 @@ public interface AppointmentMediator {
     void bookAppointment(int patientId, int doctorId, LocalDate date, String time);
 
     List<Doctor> getAllDoctors();
-    
+
     List<Appointment> getAppointmentsForPatient(int patientId);
+
+    List<Appointment> getCompletedAppointmentsByDoctor(int doctorId);
 
 }
