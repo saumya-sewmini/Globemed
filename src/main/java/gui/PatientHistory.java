@@ -4,7 +4,17 @@
  */
 package gui;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import lk.sau.app.globemed.entity.Doctor;
 import lk.sau.app.globemed.entity.Patient;
+import lk.sau.app.globemed.mediator.AppointmentMediator;
+import lk.sau.app.globemed.mediator.AppointmentMediatorImpl;
 import lk.sau.app.globemed.util.HibernateUtil;
 import org.hibernate.Session;
 
@@ -14,7 +24,11 @@ import org.hibernate.Session;
  */
 public class PatientHistory extends javax.swing.JFrame {
 
+    private AppointmentMediator mediator = new AppointmentMediatorImpl();
+    private Map<String, Doctor> doctorMap = new HashMap<>();
+
     private int patientId;
+
     /**
      * Creates new form PatientHistory
      */
@@ -26,8 +40,10 @@ public class PatientHistory extends javax.swing.JFrame {
         initComponents();
         this.patientId = patientId;
         loadPatientHistory();
+        loadDoctors();
+        jComboBox1.requestFocus();
     }
-    
+
     private void loadPatientHistory() {
         // Example Hibernate call
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -38,6 +54,29 @@ public class PatientHistory extends javax.swing.JFrame {
         }
 
         session.close();
+    }
+
+    private void loadDoctors() {
+        jComboBox1.removeAllItems();
+        doctorMap.clear();
+
+        List<Doctor> doctors = mediator.getAllDoctors();
+
+        for (Doctor d : doctors) {
+            String display = d.getFname() + " " + d.getLname() + " (" + d.getSpecialization() + ")";
+            jComboBox1.addItem(display);
+            doctorMap.put(display, d);
+        }
+
+        System.out.println("Doctors loaded: " + doctors.size());
+
+    }
+
+    private void clearForm() {
+        txtTime.setText("");
+        jDateChooser1.setDate(null);
+
+        jComboBox1.requestFocus();
     }
 
     /**
@@ -57,7 +96,7 @@ public class PatientHistory extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtTime = new javax.swing.JTextField();
         jDateChooser1 = new com.toedter.calendar.JDateChooser();
         jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -85,6 +124,11 @@ public class PatientHistory extends javax.swing.JFrame {
         jLabel5.setText("Time");
 
         jButton1.setText("Book Appointment");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -105,7 +149,7 @@ public class PatientHistory extends javax.swing.JFrame {
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtTime, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -134,7 +178,7 @@ public class PatientHistory extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(20, 20, 20))
@@ -277,6 +321,29 @@ public class PatientHistory extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try {
+            String selected = (String) jComboBox1.getSelectedItem();
+            Doctor selectedDoctor = doctorMap.get(selected);
+
+            int doctorId = selectedDoctor.getDoctorId();
+
+            LocalDate date = jDateChooser1.getDate().toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+            String time = txtTime.getText();
+
+            mediator.bookAppointment(this.patientId, doctorId, date, time);
+
+            JOptionPane.showMessageDialog(this, "Appointment booked successfully!");
+            
+            clearForm();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error booking appointment: " + e.getMessage());
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -332,6 +399,6 @@ public class PatientHistory extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField txtTime;
     // End of variables declaration//GEN-END:variables
 }
