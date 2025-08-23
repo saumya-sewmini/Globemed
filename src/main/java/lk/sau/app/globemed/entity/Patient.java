@@ -16,9 +16,9 @@ public class Patient {
     
     @Id
     @Column(name = "patient_id")
-    private int patientId;   // same as user_id
+    private Integer patientId;   // same as user_id
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "patient_id")  
     private User user;
@@ -36,11 +36,11 @@ public class Patient {
     @JoinColumn(name = "gender_id", nullable = false)
     private Gender gender;
 
-    public int getPatientId() {
+    public Integer getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(int patientId) {
+    public void setPatientId(Integer patientId) {
         this.patientId = patientId;
     }
 

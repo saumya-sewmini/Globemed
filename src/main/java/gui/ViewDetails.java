@@ -15,7 +15,7 @@ public class ViewDetails extends javax.swing.JFrame {
      */
     public ViewDetails(int appointmentId, int patientId, int doctorId) {
         initComponents();
-
+    
         System.out.println("Appointment: " + appointmentId);
         System.out.println("Patient: " + patientId);
         System.out.println("Doctor: " + doctorId);

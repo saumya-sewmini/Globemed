@@ -38,6 +38,9 @@ public class Gender {
         this.gender = gender;
     }
     
-    
+    @Override
+    public String toString(){
+        return gender;
+    }
     
 }
