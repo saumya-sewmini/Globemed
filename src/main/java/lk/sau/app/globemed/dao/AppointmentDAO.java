@@ -43,19 +43,29 @@ public class AppointmentDAO {
 
     public List<AppointmentDTO> findCompletedAppointmentsByDoctor(int doctorId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-        String hql = "SELECT new lk.sau.app.globemed.dto.AppointmentDTO(" +
-                     "a.id, p.id, a.doctor.id, " +  // 👈 add patientId and doctorId
-                     "CONCAT(p.fname, ' ', p.lname), " +
-                     "a.appointmentDate, a.notes) " +
-                     "FROM Appointment a " +
-                     "JOIN a.patient p " +
-                     "JOIN a.status s " +
-                     "WHERE a.doctor.id = :doctorId AND s.status = 'Completed'";
+            String hql = "SELECT new lk.sau.app.globemed.dto.AppointmentDTO("
+                    + "a.id, p.id, a.doctor.id, "
+                    + // 👈 add patientId and doctorId
+                    "CONCAT(p.fname, ' ', p.lname), "
+                    + "a.appointmentDate, a.notes) "
+                    + "FROM Appointment a "
+                    + "JOIN a.patient p "
+                    + "JOIN a.status s "
+                    + "WHERE a.doctor.id = :doctorId AND s.status = 'Completed'";
 
-        return session.createQuery(hql, AppointmentDTO.class)
-                .setParameter("doctorId", doctorId)
-                .getResultList();
+            return session.createQuery(hql, AppointmentDTO.class)
+                    .setParameter("doctorId", doctorId)
+                    .getResultList();
+        }
     }
+
+    public List<Appointment> getAppointmentsByPatientId(int patientId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "FROM Appointment a WHERE a.patient.patientId = :pid", Appointment.class)
+                    .setParameter("pid", patientId)
+                    .list();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ package lk.sau.app.globemed.mediator;
 
 import java.time.LocalDate;
 import java.util.List;
+import lk.sau.app.globemed.dao.AppointmentDAO;
 import lk.sau.app.globemed.entity.Appointment;
 import lk.sau.app.globemed.entity.Doctor;
 import lk.sau.app.globemed.entity.Patient;
@@ -19,6 +20,8 @@ import org.hibernate.Transaction;
  * @author Saumya
  */
 public class AppointmentMediatorImpl implements AppointmentMediator {
+    
+    private AppointmentDAO appointmentDAO = new AppointmentDAO();
 
     @Override
     public void bookAppointment(int patientId, int doctorId, LocalDate date, String time) {
@@ -55,6 +58,11 @@ public class AppointmentMediatorImpl implements AppointmentMediator {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM Doctor", Doctor.class).list();
         }
+    }
+
+    @Override
+    public List<Appointment> getAppointmentsForPatient(int patientId) {
+        return appointmentDAO.getAppointmentsByPatientId(patientId);
     }
 
 }

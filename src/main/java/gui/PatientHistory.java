@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import lk.sau.app.globemed.entity.Appointment;
 import lk.sau.app.globemed.entity.Doctor;
 import lk.sau.app.globemed.entity.Patient;
 import lk.sau.app.globemed.mediator.AppointmentMediator;
@@ -42,6 +44,7 @@ public class PatientHistory extends javax.swing.JFrame {
         loadPatientHistory();
         loadDoctors();
         jComboBox1.requestFocus();
+        loadAppointmentsToTable(patientId);
     }
 
     private void loadPatientHistory() {
@@ -79,6 +82,34 @@ public class PatientHistory extends javax.swing.JFrame {
         jComboBox1.requestFocus();
     }
 
+    private void loadAppointmentsToTable(int patientId) {
+
+        AppointmentMediator mediator = new AppointmentMediatorImpl();
+        List<Appointment> appointments = mediator.getAppointmentsForPatient(patientId);
+
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"Doctor", "Date", "Time", "Status"}
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        for (Appointment a : appointments) {
+            model.addRow(new Object[]{
+                a.getDoctor().getFname() +" "+ a.getDoctor().getFname() +" ("+ a.getDoctor().getSpecialization() +")",
+                a.getAppointmentDate(),
+                a.getAppointmentTime(),
+                a.getStatus().getStatus()
+            });
+        }
+
+        aHistoryTable.setModel(model);
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -102,7 +133,7 @@ public class PatientHistory extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        aHistoryTable = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -186,7 +217,7 @@ public class PatientHistory extends javax.swing.JFrame {
 
         jLabel6.setText("Appointment History");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        aHistoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -202,7 +233,7 @@ public class PatientHistory extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(aHistoryTable);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -337,7 +368,7 @@ public class PatientHistory extends javax.swing.JFrame {
             mediator.bookAppointment(this.patientId, doctorId, date, time);
 
             JOptionPane.showMessageDialog(this, "Appointment booked successfully!");
-            
+
             clearForm();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error booking appointment: " + e.getMessage());
@@ -380,6 +411,7 @@ public class PatientHistory extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable aHistoryTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
@@ -397,8 +429,8 @@ public class PatientHistory extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField txtTime;
     // End of variables declaration//GEN-END:variables
+
 }
