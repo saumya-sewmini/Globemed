@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import lk.sau.app.globemed.builder.PatientBuilder;
 import lk.sau.app.globemed.dao.PatientDAO;
 import lk.sau.app.globemed.entity.Gender;
@@ -34,10 +35,18 @@ public class AdminDashboard extends javax.swing.JFrame {
     public AdminDashboard() {
         initComponents();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
+
         txtFName.requestFocus();
 
         loadGenderCombo();
+
+        patientTable.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{
+                    "ID", "Username", "Email", "Phone", "Gender"
+                }
+        ));
+        loadPatientsToTable();
     }
 
     private void loadGenderCombo() {
@@ -62,8 +71,26 @@ public class AdminDashboard extends javax.swing.JFrame {
         txtEmail.setText("");
         txtPhone.setText("");
         txtDob.setDate(null);
-        
+
         txtFName.requestFocus();
+    }
+
+    private void loadPatientsToTable() {
+        DefaultTableModel model = (DefaultTableModel) patientTable.getModel();
+        model.setRowCount(0);
+
+        PatientDAO dao = new PatientDAO();
+        List<Patient> patients = dao.getAllPatients();
+
+        for (Patient p : patients) {
+            model.addRow(new Object[]{
+                p.getPatientId(),
+                p.getUser().getUsername(),
+                p.getUser().getEmail(),
+                p.getUser().getPhone(),
+                p.getGender().getGender()
+            });
+        }
     }
 
     /**
@@ -95,7 +122,7 @@ public class AdminDashboard extends javax.swing.JFrame {
         txtPhone = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        patientTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -150,12 +177,12 @@ public class AdminDashboard extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        patientTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "id", "Username", "Email", "Phone", "Gender"
+                "ID", "Username", "Email", "Phone", "Gender"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -166,7 +193,7 @@ public class AdminDashboard extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(patientTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -257,12 +284,12 @@ public class AdminDashboard extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(451, 451, 451)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(486, 486, 486))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -342,6 +369,7 @@ public class AdminDashboard extends javax.swing.JFrame {
             tx.commit();
             JOptionPane.showMessageDialog(this, "Patient saved successfully!");
             clearForm();
+            loadPatientsToTable();
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -399,7 +427,7 @@ public class AdminDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable patientTable;
     private com.toedter.calendar.JDateChooser txtDob;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtFName;

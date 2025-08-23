@@ -4,6 +4,7 @@
  */
 package lk.sau.app.globemed.dao;
 
+import java.util.List;
 import lk.sau.app.globemed.entity.Patient;
 import lk.sau.app.globemed.util.HibernateUtil;
 import org.hibernate.Session;
@@ -22,6 +23,12 @@ public class PatientDAO {
 
             tx.commit();
             System.out.println("Transaction committed successfully!");
+        }
+    }
+    
+    public List<Patient> getAllPatients() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Patient", Patient.class).list();
         }
     }
 
