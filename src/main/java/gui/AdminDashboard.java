@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -47,7 +48,13 @@ public class AdminDashboard extends javax.swing.JFrame {
                 new String[]{
                     "ID", "Username", "Email", "Phone", "Gender"
                 }
-        ));
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        });
+
         loadPatientsToTable();
     }
 
@@ -214,11 +221,16 @@ public class AdminDashboard extends javax.swing.JFrame {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        patientTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                patientTableMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(patientTable);
@@ -426,6 +438,23 @@ public class AdminDashboard extends javax.swing.JFrame {
 
         });
     }//GEN-LAST:event_txtUsernameKeyReleased
+
+    private void patientTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_patientTableMouseClicked
+        // TODO add your handling code here:
+        int row = patientTable.getSelectedRow();
+
+        if (evt.getClickCount() == 2 && row != -1) {
+
+            int patientId = (int) patientTable.getValueAt(row, 0);
+
+            java.awt.Frame parent = (java.awt.Frame) SwingUtilities.getWindowAncestor(AdminDashboard.this);
+
+            PatientHistory historyForm = new PatientHistory(patientId);
+            historyForm.setVisible(true);
+            System.out.println("Opening history for Patient ID: " + patientId);
+        }
+
+    }//GEN-LAST:event_patientTableMouseClicked
 
     /**
      * @param args the command line arguments

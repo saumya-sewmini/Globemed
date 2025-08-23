@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @author Saumya
  */
 @Entity
-@Table(name = "appoinments")
+@Table(name = "appointments")
 public class Appointment {
     
     @Id
@@ -27,15 +27,15 @@ public class Appointment {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    @Column(name = "appoinment_date", nullable = false)
+    @Column(name = "appointment_date", nullable = false)
     private LocalDateTime appointmentDate;
+    
+    @Column(name = "appointment_time", length = 45)
+    private String appointmentTime;
 
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
-
-    @Column(name = "notes", columnDefinition = "TEXT")
-    private String notes;
 
     public int getId() {
         return id;
@@ -69,20 +69,20 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
     public Status getStatus() {
         return status;
     }
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
     }
     
     

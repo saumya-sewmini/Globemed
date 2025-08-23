@@ -55,7 +55,6 @@ public class AppointmentBuilder {
         apptAppointment.setDoctor(doctor);
         apptAppointment.setAppointmentDate(appointmentDate);
         apptAppointment.setStatus(status);
-        apptAppointment.setNotes(notes);
         return apptAppointment;
     }
     

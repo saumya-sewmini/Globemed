@@ -29,9 +29,10 @@
         <mapping class="lk.sau.app.globemed.entity.Insurance"/>
         <mapping class="lk.sau.app.globemed.entity.MedicalRecord"/>
         <mapping class="lk.sau.app.globemed.entity.Patient"/>
-        <mapping class="lk.sau.app.globemed.entity.Prescription"/>
         <mapping class="lk.sau.app.globemed.entity.Role"/>
         <mapping class="lk.sau.app.globemed.entity.Status"/>
         <mapping class="lk.sau.app.globemed.entity.User"/>
+        <mapping class="lk.sau.app.globemed.entity.PaymentType"/>
+        <mapping class="lk.sau.app.globemed.entity.TreatmentType"/>
     </session-factory>
 </hibernate-configuration>

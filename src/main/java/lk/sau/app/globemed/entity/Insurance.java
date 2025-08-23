@@ -27,10 +27,6 @@ public class Insurance {
     @Column(name = "coverage_details", columnDefinition = "TEXT")
     private String coverageDetails;
 
-    @ManyToOne
-    @JoinColumn(name = "patient_id", nullable = false)
-    private Patient patient;
-
     public int getId() {
         return id;
     }
@@ -61,14 +57,6 @@ public class Insurance {
 
     public void setCoverageDetails(String coverageDetails) {
         this.coverageDetails = coverageDetails;
-    }
-
-    public Patient getPatient() {
-        return patient;
-    }
-
-    public void setPatient(Patient patient) {
-        this.patient = patient;
     }
     
     

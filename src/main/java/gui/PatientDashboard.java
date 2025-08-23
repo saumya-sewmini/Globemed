@@ -62,8 +62,7 @@ public class PatientDashboard extends javax.swing.JFrame {
                 a.getId(),
                 a.getDoctor().getFname() +" "+a.getDoctor().getLname(),
                 a.getAppointmentDate(),
-                a.getStatus().getStatus(),
-                a.getNotes()
+                a.getStatus().getStatus()
             });
         }
     }

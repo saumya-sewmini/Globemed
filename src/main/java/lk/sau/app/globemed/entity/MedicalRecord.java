@@ -26,14 +26,17 @@ public class MedicalRecord {
     @JoinColumn(name = "doctor_id")
     private Doctor doctor;
 
-    @Column(name = "diagnosis", columnDefinition = "TEXT")
-    private String diagnosis;
-
-    @Column(name = "treatment", columnDefinition = "TEXT")
-    private String treatment;
-
     @Column(name = "record_date", nullable = false, updatable = false)
     private LocalDateTime recordDate;
+    
+    @Column(name = "treatment_type_id", nullable = false)
+    private String treatmentTypeId;
+
+    @Column(name = "medicine", columnDefinition = "TEXT")
+    private String medicine;
+    
+    @Column(name = "note", columnDefinition = "TEXT")
+    private String note;
 
     public int getId() {
         return id;
@@ -59,28 +62,36 @@ public class MedicalRecord {
         this.doctor = doctor;
     }
 
-    public String getDiagnosis() {
-        return diagnosis;
-    }
-
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    public String getTreatment() {
-        return treatment;
-    }
-
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
-    }
-
     public LocalDateTime getRecordDate() {
         return recordDate;
     }
 
     public void setRecordDate(LocalDateTime recordDate) {
         this.recordDate = recordDate;
+    }
+
+    public String getTreatmentTypeId() {
+        return treatmentTypeId;
+    }
+
+    public void setTreatmentTypeId(String treatmentTypeId) {
+        this.treatmentTypeId = treatmentTypeId;
+    }
+
+    public String getMedicine() {
+        return medicine;
+    }
+
+    public void setMedicine(String medicine) {
+        this.medicine = medicine;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
     
     

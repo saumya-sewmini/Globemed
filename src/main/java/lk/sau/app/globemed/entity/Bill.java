@@ -28,6 +28,10 @@ public class Bill {
 
     @Column(name = "billing_date", nullable = false, updatable = false)
     private LocalDateTime billingDate;
+    
+    @ManyToOne
+    @JoinColumn(name = "payment_type_id", nullable = false)
+    private PaymentType paymentType;
 
     public int getId() {
         return id;
@@ -59,6 +63,14 @@ public class Bill {
 
     public void setBillingDate(LocalDateTime billingDate) {
         this.billingDate = billingDate;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
     }
     
     
