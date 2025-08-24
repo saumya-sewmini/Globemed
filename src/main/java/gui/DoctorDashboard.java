@@ -5,11 +5,19 @@
 package gui;
 
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import lk.sau.app.globemed.auth.LoggedInUser;
 import lk.sau.app.globemed.entity.Appointment;
+import lk.sau.app.globemed.entity.Doctor;
+import lk.sau.app.globemed.entity.MedicalRecord;
+import lk.sau.app.globemed.entity.Patient;
+import lk.sau.app.globemed.entity.TreatmentType;
 import lk.sau.app.globemed.mediator.AppointmentMediator;
 import lk.sau.app.globemed.mediator.AppointmentMediatorImpl;
+import lk.sau.app.globemed.util.HibernateUtil;
+import lk.sau.app.globemed.visitor.SaveMedicalRecordVisitor;
+import org.hibernate.Session;
 
 /**
  *
@@ -27,7 +35,7 @@ public class DoctorDashboard extends javax.swing.JFrame {
         scheduleTable.setModel(new DefaultTableModel(
                 new Object[][]{},
                 new String[]{
-                     "Patient ID", "Appointment ID", "Patient Name", "Date", "Time"
+                    "Patient ID", "Appointment ID", "Patient Name", "Date", "Time"
                 }
         ) {
             @Override
@@ -37,6 +45,7 @@ public class DoctorDashboard extends javax.swing.JFrame {
         });
 
         loadCompletedAppointments();
+        loadTreatmentTypes();
         jTextField1.setEditable(false);
 
     }
@@ -62,6 +71,16 @@ public class DoctorDashboard extends javax.swing.JFrame {
 
         scheduleTable.getColumnModel().getColumn(0).setMinWidth(0);
         scheduleTable.getColumnModel().getColumn(0).setMinWidth(0);
+    }
+
+    private void loadTreatmentTypes() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<TreatmentType> list = session.createQuery("from TreatmentType", TreatmentType.class).list();
+            jComboBox1.removeAllItems();
+            for (TreatmentType t : list) {
+                jComboBox1.addItem(t.getTreatmentType());
+            }
+        }
     }
 
     /**
@@ -94,6 +113,7 @@ public class DoctorDashboard extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         medicalHistory = new javax.swing.JTable();
         jLabel9 = new javax.swing.JLabel();
@@ -205,25 +225,20 @@ public class DoctorDashboard extends javax.swing.JFrame {
 
         jLabel10.setText("Patient ID");
 
+        jButton2.setText("Record Data");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,6 +249,18 @@ public class DoctorDashboard extends javax.swing.JFrame {
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(63, 63, 63)
+                        .addComponent(jButton2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -251,12 +278,14 @@ public class DoctorDashboard extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addContainerGap())
         );
 
         medicalHistory.setModel(new javax.swing.table.DefaultTableModel(
@@ -315,7 +344,6 @@ public class DoctorDashboard extends javax.swing.JFrame {
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -366,6 +394,44 @@ public class DoctorDashboard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_scheduleTableMouseClicked
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            // Fetch patient
+            int patientId = Integer.parseInt(jTextField1.getText());
+            Patient patient = session.get(Patient.class, patientId);
+
+            // Fetch doctor (logged in)
+            Doctor doctor = session.get(Doctor.class, LoggedInUser.getUser().getUserId());
+
+            // Fetch treatment type (selected)
+            String selectedType = (String) jComboBox1.getSelectedItem();
+            TreatmentType treatmentType = session.createQuery(
+                    "from TreatmentType where treatmentType = :name", TreatmentType.class)
+                    .setParameter("name", selectedType)
+                    .uniqueResult();
+
+            // Create new medical record
+            MedicalRecord record = new MedicalRecord();
+            record.setPatient(patient);
+            record.setDoctor(doctor);
+            record.setTreatmentTypeId(treatmentType);
+            record.setMedicine(jTextArea1.getText());
+            record.setNote(jTextArea2.getText());
+
+            // Apply visitor
+            SaveMedicalRecordVisitor visitor = new SaveMedicalRecordVisitor();
+            record.accept(visitor);
+
+            JOptionPane.showMessageDialog(this, "Medical record saved successfully!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error saving medical record.");
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -403,6 +469,7 @@ public class DoctorDashboard extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

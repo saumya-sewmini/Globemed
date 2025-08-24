@@ -18,14 +18,14 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "treatment_type")
 public class TreatmentType {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @Column(name = "type", length = 45)
     private String treatmentType;
-    
+
     @Column(name = "price")
     private double price;
 
@@ -52,7 +52,10 @@ public class TreatmentType {
     public void setPrice(double price) {
         this.price = price;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return treatmentType; // so combo shows treatment name
+    }
+
 }
