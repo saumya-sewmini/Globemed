@@ -4,10 +4,28 @@
  */
 package lk.sau.app.globemed.dao;
 
+import java.util.List;
+import lk.sau.app.globemed.entity.MedicalRecord;
+import lk.sau.app.globemed.util.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 /**
  *
  * @author Saumya
  */
 public class MedicalRecordDAO {
-    
+
+    public List<MedicalRecord> findByDoctorAndPatient(int doctorId, int patientId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<MedicalRecord> query = session.createQuery(
+                    "FROM MedicalRecord WHERE doctor.id = :doctorId AND patient.id = :patientId",
+                    MedicalRecord.class
+            );
+            query.setParameter("doctorId", doctorId);
+            query.setParameter("patientId", patientId);
+            return query.getResultList();
+        }
+    }
+
 }

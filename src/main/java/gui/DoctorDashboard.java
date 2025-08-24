@@ -8,11 +8,13 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import lk.sau.app.globemed.auth.LoggedInUser;
+import lk.sau.app.globemed.dao.MedicalRecordDAO;
 import lk.sau.app.globemed.entity.Appointment;
 import lk.sau.app.globemed.entity.Doctor;
 import lk.sau.app.globemed.entity.MedicalRecord;
 import lk.sau.app.globemed.entity.Patient;
 import lk.sau.app.globemed.entity.TreatmentType;
+import lk.sau.app.globemed.entity.User;
 import lk.sau.app.globemed.mediator.AppointmentMediator;
 import lk.sau.app.globemed.mediator.AppointmentMediatorImpl;
 import lk.sau.app.globemed.util.HibernateUtil;
@@ -81,6 +83,12 @@ public class DoctorDashboard extends javax.swing.JFrame {
                 jComboBox1.addItem(t.getTreatmentType());
             }
         }
+    }
+
+    private void clearForm() {
+        jTextField1.setText("");
+        jTextArea1.setText("");
+        jTextArea2.setText("");
     }
 
     /**
@@ -282,8 +290,8 @@ public class DoctorDashboard extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addContainerGap())
         );
@@ -383,15 +391,38 @@ public class DoctorDashboard extends javax.swing.JFrame {
 
     private void scheduleTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scheduleTableMouseClicked
         // TODO add your handling code here:
-        if (evt.getClickCount() == 2 && scheduleTable.getSelectedRow() != -1) {
-            int row = scheduleTable.getSelectedRow();
+        int row = scheduleTable.getSelectedRow();
 
+        if (evt.getClickCount() == 2 && row != -1) {
             Object patientIdObj = scheduleTable.getValueAt(row, 0);
 
             if (patientIdObj != null) {
                 jTextField1.setText(patientIdObj.toString());
+
+                int patientId = Integer.parseInt(patientIdObj.toString());
+                User loggedIn = LoggedInUser.getUser();
+
+                if (loggedIn != null) {
+                    int doctorId = loggedIn.getUserId();
+
+                    MedicalRecordDAO dao = new MedicalRecordDAO();
+                    List<MedicalRecord> records = dao.findByDoctorAndPatient(doctorId, patientId);
+
+                    DefaultTableModel model = (DefaultTableModel) medicalHistory.getModel();
+                    model.setRowCount(0);
+
+                    for (MedicalRecord record : records) {
+                        model.addRow(new Object[]{
+                            record.getRecordDate(),
+                            record.getTreatmentTypeId(),
+                            record.getMedicine(),
+                            record.getNote()
+                        });
+                    }
+                }
             }
         }
+
     }//GEN-LAST:event_scheduleTableMouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -425,6 +456,8 @@ public class DoctorDashboard extends javax.swing.JFrame {
             record.accept(visitor);
 
             JOptionPane.showMessageDialog(this, "Medical record saved successfully!");
+
+            clearForm();
 
         } catch (Exception e) {
             e.printStackTrace();
