@@ -18,11 +18,11 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "payment_type")
 public class PaymentType {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @Column(name = "type", length = 45)
     private String paymentType;
 
@@ -41,7 +41,10 @@ public class PaymentType {
     public void setPaymentType(String paymentType) {
         this.paymentType = paymentType;
     }
-    
-    
-    
+
+    @Override
+    public String toString() {
+        return paymentType;
+    }
+
 }

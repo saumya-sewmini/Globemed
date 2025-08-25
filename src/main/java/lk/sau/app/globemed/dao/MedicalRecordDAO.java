@@ -39,4 +39,10 @@ public class MedicalRecordDAO {
         }
     }
 
+    public MedicalRecord findById(int id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.get(MedicalRecord.class, id);
+        }
+    }
+
 }

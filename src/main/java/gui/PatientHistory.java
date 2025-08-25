@@ -6,6 +6,7 @@ package gui;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,13 +119,20 @@ public class PatientHistory extends javax.swing.JFrame {
         List<MedicalRecord> records = dao.findByPatient(patientId);
 
         DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"Date", "Doctor", "Treatment", "Medicine", "Note"}, 0
-        );
+                new Object[]{"ID", "Doctor", "Treatment Date", "Treatment Type", "Diagnosis", "Prescriptions"}, 0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         for (MedicalRecord rec : records) {
+
             model.addRow(new Object[]{
+                rec.getId(),
+                rec.getDoctor() != null ? rec.getDoctor().getFname() + " " + rec.getDoctor().getLname() : "N/A",
                 rec.getRecordDate(),
-                rec.getDoctor() != null ? rec.getDoctor().getFname() +" "+ rec.getDoctor().getLname(): "N/A",
                 rec.getTreatmentTypeId().getTreatmentType(),
                 rec.getMedicine(),
                 rec.getNote()
@@ -315,6 +323,11 @@ public class PatientHistory extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        medicalHistory.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                medicalHistoryMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(medicalHistory);
 
         jButton2.setText("Bill");
@@ -422,6 +435,25 @@ public class PatientHistory extends javax.swing.JFrame {
     private void aHistoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aHistoryTableMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_aHistoryTableMouseClicked
+
+    private void medicalHistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_medicalHistoryMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            int row = medicalHistory.getSelectedRow();
+            if (row != -1) {
+                int modelRow = medicalHistory.convertRowIndexToModel(row);
+                int medicalRecordId = (Integer) medicalHistory.getModel().getValueAt(modelRow, 0);
+
+                MedicalRecordDAO dao = new MedicalRecordDAO();
+                MedicalRecord record = dao.findById(medicalRecordId);
+
+                if (record != null) {
+                    BillingDialog dialog = new BillingDialog(null, record.getPatient().getPatientId(), record);
+                    dialog.setVisible(true);
+                }
+            }
+        }
+    }//GEN-LAST:event_medicalHistoryMouseClicked
 
     /**
      * @param args the command line arguments
