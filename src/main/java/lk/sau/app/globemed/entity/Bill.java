@@ -6,6 +6,8 @@ package lk.sau.app.globemed.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lk.sau.app.globemed.visitor.BillVisitor;
+import lk.sau.app.globemed.visitor.VisitableBill;
 
 /**
  *
@@ -13,8 +15,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "bill")
-public class Bill {
-    
+public class Bill implements VisitableBill {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -28,11 +30,11 @@ public class Bill {
 
     @Column(name = "billing_date", nullable = false, updatable = false)
     private LocalDateTime billingDate;
-    
+
     @ManyToOne
     @JoinColumn(name = "payment_type_id", nullable = false)
     private PaymentType paymentType;
-    
+
     @ManyToOne
     @JoinColumn(name = "medical_records_id", nullable = false)
     private MedicalRecord medicalRecord;
@@ -84,5 +86,9 @@ public class Bill {
     public void setMedicalRecord(MedicalRecord medicalRecord) {
         this.medicalRecord = medicalRecord;
     }
-    
+
+    public void accept(BillVisitor visitor) {
+        visitor.visit(this);
+    }
+
 }

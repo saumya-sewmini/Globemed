@@ -20,6 +20,7 @@ import lk.sau.app.globemed.entity.Bill;
 import lk.sau.app.globemed.entity.MedicalRecord;
 import lk.sau.app.globemed.entity.PaymentType;
 import lk.sau.app.globemed.util.HibernateUtil;
+import lk.sau.app.globemed.visitor.PdfBillVisitor;
 import org.hibernate.Session;
 
 /**
@@ -35,6 +36,8 @@ public class BillingDialog extends JDialog {
     private MedicalRecord medicalRecord;
 
     private BillService billService;
+
+    private Bill savedBill;
 
     public BillingDialog(Frame parent, int patientId, MedicalRecord medicalRecord) {
         super(parent, "Pay Bill", true);
@@ -54,7 +57,7 @@ public class BillingDialog extends JDialog {
         paymentTypeCombo = new JComboBox<>(loadPaymentTypes().toArray(new PaymentType[0]));
         payButton = new JButton("Pay Bill");
         printButton = new JButton("Print Bill");
-        printButton.setEnabled(false);
+//        printButton.setEnabled(false);
 
         add(new JLabel("Patient ID:"));
         add(new JLabel(String.valueOf(patientId)));
@@ -68,6 +71,7 @@ public class BillingDialog extends JDialog {
         add(printButton);
 
         payButton.addActionListener(e -> saveBill());
+        printButton.addActionListener(e -> printBill());
         setSize(400, 250);
     }
 
@@ -94,8 +98,23 @@ public class BillingDialog extends JDialog {
         bill.setPaymentType(selectedType);
 
         if (billService.saveBill(bill)) {
+            this.savedBill = bill;
             JOptionPane.showMessageDialog(this, "Bill Paid Successfully!");
             printButton.setEnabled(true);
+        }
+    }
+
+    private void printBill() {
+        if (savedBill != null) {
+            try {
+                PdfBillVisitor pdfVisitor = new PdfBillVisitor();
+                savedBill.accept(pdfVisitor);  // Visitor in action
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error printing bill: " + ex.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No bill available to print.");
         }
     }
 
