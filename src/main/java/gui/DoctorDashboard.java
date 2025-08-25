@@ -220,13 +220,13 @@ public class DoctorDashboard extends javax.swing.JFrame {
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel7.setText("Medicine");
+        jLabel7.setText("Diagnosis");
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane2.setViewportView(jTextArea1);
 
-        jLabel8.setText("Note");
+        jLabel8.setText("Prescription");
 
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
@@ -307,7 +307,7 @@ public class DoctorDashboard extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Record Date", "Treatment Type", "Medicine", "Note"
+                "Record Date", "Treatment Type", "Diagnosis", "Prescription"
             }
         ) {
             boolean[] canEdit = new boolean [] {

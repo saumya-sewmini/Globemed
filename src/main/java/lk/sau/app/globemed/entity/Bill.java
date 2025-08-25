@@ -32,6 +32,10 @@ public class Bill {
     @ManyToOne
     @JoinColumn(name = "payment_type_id", nullable = false)
     private PaymentType paymentType;
+    
+    @ManyToOne
+    @JoinColumn(name = "medical_records_id", nullable = false)
+    private MedicalRecord medicalRecord;
 
     public int getId() {
         return id;
@@ -72,7 +76,13 @@ public class Bill {
     public void setPaymentType(PaymentType paymentType) {
         this.paymentType = paymentType;
     }
-    
-    
+
+    public MedicalRecord getMedicalRecord() {
+        return medicalRecord;
+    }
+
+    public void setMedicalRecord(MedicalRecord medicalRecord) {
+        this.medicalRecord = medicalRecord;
+    }
     
 }

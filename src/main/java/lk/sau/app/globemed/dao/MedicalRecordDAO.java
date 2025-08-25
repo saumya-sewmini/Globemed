@@ -28,4 +28,15 @@ public class MedicalRecordDAO {
         }
     }
 
+    public List<MedicalRecord> findByPatient(int patientId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<MedicalRecord> query = session.createQuery(
+                    "FROM MedicalRecord WHERE patient.id = :patientId ORDER BY recordDate DESC",
+                    MedicalRecord.class
+            );
+            query.setParameter("patientId", patientId);
+            return query.getResultList();
+        }
+    }
+
 }
