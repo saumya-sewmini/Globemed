@@ -7,7 +7,6 @@ package lk.sau.app.globemed.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lk.sau.app.globemed.visitor.MedicalRecordVisitor;
-import lk.sau.app.globemed.visitor.SaveMedicalRecordVisitor;
 import lk.sau.app.globemed.visitor.VisitableMedicalRecord;
 
 /**
