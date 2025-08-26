@@ -34,5 +34,7 @@
         <mapping class="lk.sau.app.globemed.entity.User"/>
         <mapping class="lk.sau.app.globemed.entity.PaymentType"/>
         <mapping class="lk.sau.app.globemed.entity.TreatmentType"/>
+        <mapping class="lk.sau.app.globemed.entity.Staff"/>
+        <mapping class="lk.sau.app.globemed.entity.Branch"/>
     </session-factory>
 </hibernate-configuration>
