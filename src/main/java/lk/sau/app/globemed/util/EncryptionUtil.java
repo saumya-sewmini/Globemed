@@ -13,7 +13,7 @@ import java.util.Base64;
  */
 public class EncryptionUtil {
 
-    private static final String SECRET_KEY = "YourSecretKey";
+    private static final String SECRET_KEY = "MySecretKey12345";
 
     public static String encrypt(String strToEncrypt) {
         try {

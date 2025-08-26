@@ -17,10 +17,10 @@ public class AuthProcessor {
     public AuthProcessor(){
         AuthHandler admin = new AdminHandler();
         AuthHandler doctor = new DoctorHandler();
-        AuthHandler patient = new PatientHandler();
+        AuthHandler nurse = new NurseHandler();
 
         admin.setNextHandler(doctor);
-        doctor.setNextHandler(patient);
+        doctor.setNextHandler(nurse);
 
         handlerChain = new FileLoggingAuthHandler(
                            new LoggingAuthHandler(

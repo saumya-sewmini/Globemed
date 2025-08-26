@@ -4,6 +4,7 @@
  */
 package lk.sau.app.globemed.auth;
 
+import gui.NurseDashboard;
 import javax.swing.JOptionPane;
 import lk.sau.app.globemed.entity.User;
 
@@ -11,18 +12,18 @@ import lk.sau.app.globemed.entity.User;
  *
  * @author Saumya
  */
-public class PatientHandler extends AuthHandler{
+public class NurseHandler extends AuthHandler{
 
     @Override
     public void handle(User user) {
         
-//        if (user.getRole().getRoleName().equalsIgnoreCase("patient")) {
-//            new PatientDashboard().setVisible(true);
-//        } else if (nextHandler != null) {
-//            nextHandler.handle(user);
-//        } else {
-//            JOptionPane.showMessageDialog(null, "Unknown role: " + user.getRole().getRoleName());
-//        }
+        if (user.getRole().getRoleName().equalsIgnoreCase("nurse")) {
+            new NurseDashboard().setVisible(true);
+        } else if (nextHandler != null) {
+            nextHandler.handle(user);
+        } else {
+            JOptionPane.showMessageDialog(null, "Unknown role: " + user.getRole().getRoleName());
+        }
         
     }
     

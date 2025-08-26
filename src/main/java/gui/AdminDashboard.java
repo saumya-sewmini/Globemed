@@ -769,6 +769,7 @@ public class AdminDashboard extends javax.swing.JFrame {
 
             tx.commit();
             JOptionPane.showMessageDialog(this, "Nurse " + nurse.getFname() + " added successfully!");
+            loadStaffToTable();
             clearStaffForm();
         } catch (Exception e) {
             e.printStackTrace();
