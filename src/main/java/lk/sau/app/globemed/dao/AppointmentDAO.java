@@ -6,6 +6,7 @@ package lk.sau.app.globemed.dao;
 
 import java.util.List;
 import lk.sau.app.globemed.entity.Appointment;
+import lk.sau.app.globemed.entity.Status;
 import lk.sau.app.globemed.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -58,6 +59,27 @@ public class AppointmentDAO {
                     .setParameter("doctorId", doctorId)
                     .setParameter("statusId", statusId)
                     .list();
+        }
+    }
+
+    public void updateStatus(int appointmentId, int statusId) {
+        Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+
+            Appointment appointment = session.get(Appointment.class, appointmentId);
+            if (appointment != null) {
+                Status status = session.get(Status.class, statusId);
+                appointment.setStatus(status);
+                session.merge(appointment);
+            }
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
         }
     }
 

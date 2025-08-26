@@ -4,6 +4,7 @@
  */
 package gui;
 
+import java.awt.FlowLayout;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -11,8 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import lk.sau.app.globemed.dao.AppointmentDAO;
 import lk.sau.app.globemed.dao.MedicalRecordDAO;
 import lk.sau.app.globemed.entity.Appointment;
 import lk.sau.app.globemed.entity.Doctor;
@@ -47,6 +51,7 @@ public class PatientHistory extends javax.swing.JFrame {
         loadPatientHistory();
         loadDoctors();
         jComboBox1.requestFocus();
+
         loadAppointmentsToTable(patientId);
         loadMedicalHistory();
     }
@@ -93,7 +98,7 @@ public class PatientHistory extends javax.swing.JFrame {
 
         DefaultTableModel model = new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"Doctor", "Date", "Time", "Status"}
+                new String[]{"ID", "Doctor", "Date", "Time", "Status"}
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -102,7 +107,7 @@ public class PatientHistory extends javax.swing.JFrame {
         };
 
         for (Appointment a : appointments) {
-            model.addRow(new Object[]{
+            model.addRow(new Object[]{a,
                 a.getDoctor().getFname() + " " + a.getDoctor().getFname() + " (" + a.getDoctor().getSpecialization() + ")",
                 a.getAppointmentDate(),
                 a.getAppointmentTime(),
@@ -111,6 +116,8 @@ public class PatientHistory extends javax.swing.JFrame {
         }
 
         aHistoryTable.setModel(model);
+
+        aHistoryTable.removeColumn(aHistoryTable.getColumnModel().getColumn(0));
 
     }
 
@@ -140,6 +147,43 @@ public class PatientHistory extends javax.swing.JFrame {
         }
 
         medicalHistory.setModel(model);
+    }
+
+    private void showAppointmentDialog(int appointmentId) {
+        JDialog dialog = new JDialog(this, "Manage Appointment", true);
+        dialog.setSize(300, 150);
+        dialog.setLayout(new FlowLayout());
+
+        JButton confirmBtn = new JButton("Confirm Appointment");
+        JButton cancelBtn = new JButton("Cancel Appointment");
+
+        confirmBtn.addActionListener(e -> {
+            updateAppointmentStatus(appointmentId, 2); // status_id = 2
+            dialog.dispose();
+            reloadAppointments(patientId);
+        });
+
+        cancelBtn.addActionListener(e -> {
+            updateAppointmentStatus(appointmentId, 3); // status_id = 3
+            dialog.dispose();
+            reloadAppointments(patientId);
+        });
+
+        dialog.add(confirmBtn);
+        dialog.add(cancelBtn);
+
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private void updateAppointmentStatus(int appointmentId, int statusId) {
+        AppointmentDAO dao = new AppointmentDAO();
+        dao.updateStatus(appointmentId, statusId);
+    }
+
+    private void reloadAppointments(int patientId) {
+        this.patientId = patientId; // however you track the patient
+        loadAppointmentsToTable(patientId);
     }
 
     /**
@@ -434,6 +478,15 @@ public class PatientHistory extends javax.swing.JFrame {
 
     private void aHistoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aHistoryTableMouseClicked
         // TODO add your handling code here:
+
+        if (evt.getClickCount() == 2) { // double-click
+            int row = aHistoryTable.getSelectedRow();
+            if (row != -1) {
+                Appointment appointment = (Appointment) aHistoryTable.getModel().getValueAt(row, 0);
+                int appointmentId = appointment.getId();
+                showAppointmentDialog(appointmentId);
+            }
+        }
     }//GEN-LAST:event_aHistoryTableMouseClicked
 
     private void medicalHistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_medicalHistoryMouseClicked
