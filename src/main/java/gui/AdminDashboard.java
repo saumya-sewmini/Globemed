@@ -20,12 +20,17 @@ import lk.sau.app.globemed.builder.NurseBuilder;
 import lk.sau.app.globemed.builder.PatientBuilder;
 import lk.sau.app.globemed.dao.PatientDAO;
 import lk.sau.app.globemed.dao.StaffDAO;
+import lk.sau.app.globemed.decorator.EncryptionPatientService;
+import lk.sau.app.globemed.decorator.LoggingPatientService;
+import lk.sau.app.globemed.decorator.PatientService;
+import lk.sau.app.globemed.decorator.PatientServiceImpl;
 import lk.sau.app.globemed.entity.Branch;
 import lk.sau.app.globemed.entity.Gender;
 import lk.sau.app.globemed.entity.Patient;
 import lk.sau.app.globemed.entity.Staff;
 import lk.sau.app.globemed.entity.User;
 import lk.sau.app.globemed.service.GenderService;
+import lk.sau.app.globemed.util.EncryptionUtil;
 import lk.sau.app.globemed.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -108,11 +113,16 @@ public class AdminDashboard extends javax.swing.JFrame {
         List<Patient> patients = dao.getAllPatients();
 
         for (Patient p : patients) {
+
+            String decryptedPassword = EncryptionUtil.decrypt(p.getUser().getPassword());
+            String decryptedEmail = EncryptionUtil.decrypt(p.getUser().getEmail());
+            String decryptedPhone = EncryptionUtil.decrypt(p.getUser().getPhone());
+
             model.addRow(new Object[]{
                 p.getPatientId(),
                 p.getUser().getUsername(),
-                p.getUser().getEmail(),
-                p.getUser().getPhone(),
+                decryptedEmail,
+                decryptedPhone,
                 p.getGender().getGender()
             });
         }
@@ -651,7 +661,16 @@ public class AdminDashboard extends javax.swing.JFrame {
                     .setPhone(txtPhone.getText())
                     .build();
 
-            new PatientDAO().savePatient(patient);
+            // Decorate the service
+            PatientService service
+                    = new LoggingPatientService(
+                            new EncryptionPatientService(
+                                    new PatientServiceImpl()
+                            )
+                    );
+
+            // Save using decorated service
+            service.savePatient(patient);
 
             tx.commit();
             JOptionPane.showMessageDialog(this, "Patient saved successfully!");
