@@ -22,7 +22,11 @@ public class AuthProcessor {
         admin.setNextHandler(doctor);
         doctor.setNextHandler(patient);
 
-        this.handlerChain = admin;
+        handlerChain = new FileLoggingAuthHandler(
+                           new LoggingAuthHandler(
+                               new SecurityAuthHandler(admin)
+                           )
+                       );
     }
     
     public void process(User user){
