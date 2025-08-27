@@ -6,11 +6,15 @@ package lk.sau.app.globemed.mediator;
 
 import java.time.LocalDate;
 import java.util.List;
+import lk.sau.app.globemed.builder.Email;
+import lk.sau.app.globemed.builder.EmailBuilder;
 import lk.sau.app.globemed.dao.AppointmentDAO;
 import lk.sau.app.globemed.entity.Appointment;
 import lk.sau.app.globemed.entity.Doctor;
 import lk.sau.app.globemed.entity.Patient;
 import lk.sau.app.globemed.entity.Status;
+import lk.sau.app.globemed.service.EmailService;
+import lk.sau.app.globemed.util.EncryptionUtil;
 import lk.sau.app.globemed.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -20,7 +24,7 @@ import org.hibernate.Transaction;
  * @author Saumya
  */
 public class AppointmentMediatorImpl implements AppointmentMediator {
-    
+
     private AppointmentDAO appointmentDAO = new AppointmentDAO();
 
     @Override
@@ -45,6 +49,21 @@ public class AppointmentMediatorImpl implements AppointmentMediator {
                 tx.commit();
 
                 System.out.println("Appointment booked successfully for patient: " + patient.getFname());
+                
+                String decryptedEmail = EncryptionUtil.decrypt(patient.getUser().getEmail());
+
+                Email email = new EmailBuilder()
+                        .to(decryptedEmail)
+                        .subject("Appointment Confirmation")
+                        .body("Dear " + patient.getFname() + ",\n\n"
+                                + "Your appointment with Dr. " + doctor.getFname() +" "+ doctor.getLname()
+                                + " on " + date + " at " + time + " has been sheduled.\n\n"
+                                + "Thank you.")
+                        .build();
+
+                // Send email
+                EmailService emailService = new EmailService();
+                emailService.sendEmail(email);
             } else {
                 System.out.println("Invalid patient/doctor/status data!");
             }

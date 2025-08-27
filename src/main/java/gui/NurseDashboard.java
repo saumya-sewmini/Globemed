@@ -80,7 +80,7 @@ public class NurseDashboard extends javax.swing.JFrame {
                     .append(r.getTreatmentTypeId() != null ? r.getTreatmentTypeId().getTreatmentType() : "N/A").append("\n");
             sb.append("Diagnosis: ").append(r.getMedicine() != null ? r.getMedicine() : "N/A").append("\n");
             sb.append("Prescriptions: ").append(r.getNote() != null ? r.getNote() : "N/A").append("\n");
-            sb.append("\n"); // extra line between records
+            sb.append("\n");
         }
 
         jTextArea1.setText(sb.toString());
