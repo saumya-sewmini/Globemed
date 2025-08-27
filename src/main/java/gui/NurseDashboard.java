@@ -9,7 +9,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import lk.sau.app.globemed.auth.LoggedInUser;
+import lk.sau.app.globemed.dao.MedicalRecordDAO;
 import lk.sau.app.globemed.dao.PatientDAO;
+import lk.sau.app.globemed.entity.MedicalRecord;
 import lk.sau.app.globemed.entity.Patient;
 
 /**
@@ -64,6 +66,26 @@ public class NurseDashboard extends javax.swing.JFrame {
         }
     }
 
+    private void loadMedicalRecords(int patientId) {
+        MedicalRecordDAO dao = new MedicalRecordDAO();
+        List<MedicalRecord> records = dao.getByPatientId(patientId);
+
+        StringBuilder sb = new StringBuilder();
+        for (MedicalRecord r : records) {
+            sb.append("Record ID: ").append(r.getId()).append("\n");
+            sb.append("Doctor Name: ")
+                    .append(r.getDoctor() != null ? r.getDoctor().getFname() +" "+ r.getDoctor().getLname(): "N/A").append("\n");
+            sb.append("Record Date: ").append(r.getRecordDate()).append("\n");
+            sb.append("Treatment Type: ")
+                    .append(r.getTreatmentTypeId() != null ? r.getTreatmentTypeId().getTreatmentType() : "N/A").append("\n");
+            sb.append("Diagnosis: ").append(r.getMedicine() != null ? r.getMedicine() : "N/A").append("\n");
+            sb.append("Prescriptions: ").append(r.getNote() != null ? r.getNote() : "N/A").append("\n");
+            sb.append("\n"); // extra line between records
+        }
+
+        jTextArea1.setText(sb.toString());
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -98,6 +120,11 @@ public class NurseDashboard extends javax.swing.JFrame {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        nursePatientTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nursePatientTableMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(nursePatientTable);
@@ -209,6 +236,18 @@ public class NurseDashboard extends javax.swing.JFrame {
 
         });
     }//GEN-LAST:event_txtUsernameKeyReleased
+
+    private void nursePatientTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nursePatientTableMouseClicked
+        // TODO add your handling code here:
+
+        if (evt.getClickCount() == 2) { // double-click
+            int row = nursePatientTable.getSelectedRow();
+            if (row != -1) {
+                int patientId = (int) nursePatientTable.getValueAt(row, 0); // assuming col 0 = Patient ID
+                loadMedicalRecords(patientId);
+            }
+        }
+    }//GEN-LAST:event_nursePatientTableMouseClicked
 
     /**
      * @param args the command line arguments

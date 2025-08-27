@@ -45,4 +45,14 @@ public class MedicalRecordDAO {
         }
     }
 
+    public List<MedicalRecord> getByPatientId(int patientId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery(
+                    "FROM MedicalRecord m WHERE m.patient.patientId = :pid",
+                    MedicalRecord.class)
+                    .setParameter("pid", patientId)
+                    .list();
+        }
+    }
+
 }
